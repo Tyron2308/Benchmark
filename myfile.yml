@@ -1,7 +1,18 @@
-key1: val1
-key2:
-  key21: val21
-  key22: val22
-key3:
-- test1
-- test2
+configuration:
+  - test1: 
+      type: "BenchProducer"
+      topic: "test-123"
+      num-record: "10000"
+      throughput: "100"
+      config-path: ".../zl"
+      record-size: "30"
+      payload-file-path: ".../"
+  - test2: 
+      type: "BenchConsumer"
+      topic: "test-123"
+      num-record: "10000"
+      throughput: "100"
+      config-path: ".../zl"
+      record-size: "30"
+      payload-file-path: ".../"
+ 

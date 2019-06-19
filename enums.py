@@ -1,5 +1,9 @@
-def enum(*sequential, **named):
-    enums = dict(zip(sequential, range(len(sequential))), **named)
-    return type('Enum', (), enums)
-
+from enum import Enum
+class Option(Enum):
+    TOPIC = "topic"
+    NBRECORD = "num-record"
+    THROUGHPUT = "throughput"
+    CONFIG = "config-path"
+    RECORDSIZE = "record-size"
+    PAYLOADFILE = "payload-file-path"
 

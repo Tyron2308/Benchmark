@@ -1,46 +1,9 @@
 import yaml
 import yamlordereddictloader
 import sys
-from enums import enum
 from collections import OrderedDict
-import subprocess
-
-class BenchPerformer():
-      def getValueFromDict(ymlData):
-          pass
-
-      def runTestFromYml(BenchConfig, ymlData):
-          popen = subprocess.Popen(ymlData, stdout=subprocess.PIPE)
-          popen.wait()
-          output = popen.stdout.read()
-          print('output subprocess:')
-          print output
-          print output
-          print output
-          print('< ==== output subprocess:')
-          return
-
-
-class BenchProducer(BenchPerformer):
-      self.BenchCfg = enum('NBSMS','THROUGHPUT', 'CONFIG', 'RECORDSIZE', 'PAYLOAD-FILE')
-      def getValueFromDict(ymlData):
-          return (ymlData[BenchCfg.NBSMS],
-                  ymlData[BenchCfg.THROUGHPUT],
-                  ymlData[BenchCfg.CONFIG],
-                  ymlData[BenchCfg.RECORDSIZE],
-                  ymlData[BenchCfg.PAYLOADFILE])
-
-class BenchConsumer(BenchPerformer):
-      self.BenchCfg = enum('TOPIC', 'NBSMS',
-                                 'THROUGHPUT', 'CONFIG', 'RECORDSIZE', 'PAYLOAD-FILE')
-      def getValueFromDict(ymlData):
-          return (ymlData[BenchCfg.TOPIC],
-                  ymlData[BenchCfg.NBSMS],
-                  ymlData[BenchCfg.THROUGHPUT],
-                  ymlData[BenchCfg.CONFIG],
-                  ymlData[BenchCfg.RECORDSIZE],
-                  ymlData[BenchCfg.PAYLOADFILE])
-
+from BenchClass import *
+from BenchMarkSchenario import BenchMarkSchenario
 
 if __name__ == "__main__":
     # data = OrderedDict([
@@ -50,11 +13,10 @@ if __name__ == "__main__":
         # ])
     # yaml.dump(data, open('myfile.yml', 'w'), 
                     # Dumper=yamlordereddictloader.Dumper, default_flow_style=False)
-
     with open('myfile.yml') as f:
-        benchProd = BenchProducer
-
+        benchProd = BenchProducer()
         yamlData = yaml.load(f, Loader=yamlordereddictloader.Loader)
-        benchProd.runTestFromYml(benchProd.getValueFromDict(yamlData), )
-        decrypt_yml(yaml_data)
 
+        benchMaster = BenchMarkSchenario()
+
+        benchMaster.initScenario(yamlData['configuration'])
