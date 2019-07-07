@@ -2,6 +2,7 @@
 version: '2'
 services:
   zookeeper:
+    container_name: zookeeper_1
     image: confluentinc/cp-zookeeper:5.0.1
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -15,14 +16,23 @@ services:
     # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
     # -----------------------------------------------------------------------------
     image: confluentinc/cp-kafka:5.0.1
+    container_name: kafka_1
     depends_on:
       - zookeeper
     ports:
       - 9092:9092
+      - 9099:9099
     environment:
       KAFKA_BROKER_ID: 1
+      #KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9999
+      #KAFKA_OPTS: java -javaagent:/usr/bin/jmx_prometheus_javaagent-0.11.0.jar=9099:/etc/kafka/jmx-config.yaml   
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      JMX_PORT: 9999
+      #    volumes:
+      #- jar_jmx/jmx_prometheus_javaagent-0.11.0.jar:/usr/bin/
+      #- jar_jmx/jmx-config.yml:/etc/kafka
+

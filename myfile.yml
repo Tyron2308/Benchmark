@@ -1,18 +1,19 @@
+---
 configuration:
-  - test1: 
-      type: "BenchProducer"
-      topic: "test-123"
-      num-record: "10000"
-      throughput: "100"
-      config-path: ".../zl"
-      record-size: "30"
-      payload-file-path: ".../"
-  - test2: 
-      type: "BenchConsumer"
-      topic: "test-123"
-      num-record: "10000"
-      throughput: "100"
-      config-path: ".../zl"
-      record-size: "30"
-      payload-file-path: ".../"
+  - type: "BenchProducer"
+    topic: 
+      - "test-123"
+    numrecord: "40000"
+    throughput: "2100"
+    configpath: ".../zl"
+    recordsize: "30"
+    payloadfilepath: ".../"
+  - type: "BenchConsumer"
+    topic: 
+      - "test-123"
+    numrecord: "220000"
+    throughput: "800"
+    configpath: ".../zl"
+    recordsize: "30"
+    payloadfilepath: ".../"
  
