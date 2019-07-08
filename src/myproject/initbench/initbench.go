@@ -5,7 +5,7 @@ import (
     "os/exec"
 )
 
-func createContainer(pathToMake string, containerToSpin string) bool {
+func CreateContainer(pathToMake string, containerToSpin string) bool {
     output, err := exec.Command("/usr/bin/make", "-C", pathToMake, containerToSpin).Output()
     if err!=nil {
         fmt.Println(err.Error())
