@@ -27,14 +27,13 @@ services:
 
   nginx: 
     image: nginx:latest
-    container_name: nginx
+    container_name: nginx_adminer
     depends_on:
       - db
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 8088:8088
-      - 443:443
     networks:
       - dbnetwork
 

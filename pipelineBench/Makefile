@@ -12,7 +12,7 @@ kafka:
 visualization:
 	@echo "======> building visualization pipeline <======="
 	./docker-compose-influxdb-grafana/jmx_http_exporter/build_image_exporter.sh
-	#docker-compose -f docker-compose-influxdb-grafana/docker-compose.yml up -d  
+	docker-compose -f docker-compose-influxdb-grafana/docker-compose.yml up -d  
 
 logs:
 	docker-compose -f ${ARGS} logs 
