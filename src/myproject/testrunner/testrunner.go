@@ -4,6 +4,7 @@ import (
     dcode "myproject/decodeurtest"
     benchC "myproject/benchconsumer"
     benchP "myproject/benchproducer"
+    topic "myproject/topic"
 )
 
 type mapConfigTest struct {
@@ -37,6 +38,8 @@ func (this mapConfigTest) CallFunctorStored(cfg dcode.DecodeurTest) {
 }
 
 func createRoutine(str string) func(cfg dcode.DecodeurTest) bool {
+
+    kAdmin := topic.KafkaClient{}
     switch str {
         case "BenchConsumer":
             return func(cfg dcode.DecodeurTest) bool {
@@ -45,7 +48,10 @@ func createRoutine(str string) func(cfg dcode.DecodeurTest) bool {
             }
         case "BenchProducer":
             return func(cfg dcode.DecodeurTest) bool {
+
                    tmp := new (benchP.BenchProducer)
+                   tmp.Admin = kAdmin.CreateClientKafka([]string {"localhost:9092"})
+
                    return tmp.RunConcreteTest(cfg)
             }
         default:

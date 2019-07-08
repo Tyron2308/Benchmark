@@ -21,7 +21,6 @@ services:
       - zookeeper
     ports:
       - 9092:9092
-      - 9099:9099
     environment:
       KAFKA_BROKER_ID: 1
       #KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9999
@@ -31,8 +30,15 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      JMX_PORT: 9999
+      KAFKA_SUPER_USERS: User:admin
+
+      #JMX_PORT: 9999
       #    volumes:
       #- jar_jmx/jmx_prometheus_javaagent-0.11.0.jar:/usr/bin/
       #- jar_jmx/jmx-config.yml:/etc/kafka
+    volumes:
+      - "./kafka-config/producer.properties:/etc/kafka/producer.properties"
+      - "./kafka-config/gcc_log.txt:/etc/kafka/gcc_log.txt"
+
+
 
