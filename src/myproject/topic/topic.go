@@ -5,7 +5,14 @@ import (
     s     "github.com/Shopify/sarama"
           "log"
           "fmt"
+          "strconv"
 )
+
+type Request struct {
+    flag bool
+    Partitions int32
+    Replications int16
+}
 
 type Topic struct {
     TopicName string
@@ -31,28 +38,41 @@ func (k *KafkaClient) CreateClientKafka(brokerAddrs []string) *KafkaClient {
     return nil
 }
 
-func (k KafkaClient) CreateTopics(cfgTest dcode.DecodeurTest) {
-    topics, _ := k.ListTopicCluster()
-    topiclist := make(map[string]bool, len(cfgTest.ConfigTopic.Ctopic))
-    for k := range cfgTest.ConfigTopic.Ctopic {
-            fmt.Println("ffff===>", k)
-            keyName := cfgTest.ConfigTopic.Ctopic[k].Name
+func (this KafkaClient) CreateTopics(cfgTest dcode.DecodeurTest) {
+    topics, _ := this.ListTopicCluster()
+    topiclist := make(map[string]Request, len(cfgTest.Topic))
+    for k := range cfgTest.Topic {
+            fmt.Println("idx value ===>", k)
+            keyName := cfgTest.Topic[k].Name
+            fmt.Println("value ===>", cfgTest.Topic[k])
+            p, _ := strconv.Atoi(cfgTest.Topic[k].Partitions)
+            r, err := strconv.Atoi(cfgTest.Topic[k].Replications)
+            fmt.Println("rrr", r)
+            fmt.Println("rrr err", err)
             if _, ok := topics[keyName]; ok {
-                topiclist[keyName] = true
-            } else {
-                topiclist[keyName] = false
+               topiclist[keyName] = Request{
+                    flag: true,
+                    Partitions:  int32(p),
+                    Replications: int16(r),
+                }
+           } else {
+                fmt.Println("replication", r)
+                topiclist[keyName] = Request{
+                    flag: false,
+                    Partitions:  int32(p),
+                    Replications: int16(r),
+                }
             }
     }
-    //for key, v := range topiclist {
-        //if v == false {
-            //k.createTopic(Topic{
-                    //TopicName: key,
-                    //NumPartitions: topics[key].NumPartitions,
-                    //ReplicationFactor: topics[key].ReplicationFactor,
-                //},
-            //)
-        //}
-    //}
+    for key, structValue := range topiclist {
+        if structValue.flag == false {
+            fmt.Println("name topic", key)
+            fmt.Println("name partition", structValue.Partitions)
+            fmt.Println("name partition", structValue.Replications)
+            this.createTopic(Topic{ key, structValue.Partitions, structValue.Replications, },
+            )
+        }
+    }
 }
 
 func (k KafkaClient) ListTopicCluster() (map[string]s.TopicDetail, error) {

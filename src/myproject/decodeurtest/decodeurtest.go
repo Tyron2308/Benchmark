@@ -6,14 +6,30 @@ import (
     "gopkg.in/yaml.v2"
 )
 
+//type configsTopic struct {
+    //Ctopic []cfgTopic `yaml:topic`
+//}
+
+//type Topic struct {
+        //Name string `yaml:name`
+        //Partitions string `yaml:partitions`
+        //Replications string `yaml:replication`
+//}
+
 type DecodeurTest struct {
     Type string `yaml:"type"`
-    Topic []string
-    NumRecord string  `yaml:num-record, string`
+//    ConfigTopic configsTopic `yaml:topic`
+    Topic []struct {
+            Name string `yaml:name`
+            Partitions string `yaml:partitions`
+            Replications string `yaml:replications`
+    }
+
+    NumRecord string  `yaml:numrecord`
     Throughput string `yaml:throughput`
-    ConfigPath string `yaml:config-path`
-    RecordSize string `yaml:record-size`
-    PayloadFile string `yaml:payload-file-path`
+    ConfigPath string `yaml:configpath`
+    RecordSize string `yaml:recordsize`
+    Payload string `yaml:payload`
 }
 
 type configs struct {
