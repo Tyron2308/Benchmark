@@ -10,7 +10,7 @@ type BenchConsumer struct {
     channel chan interface{}
 }
 
-func (e BenchConsumer) RunConcreteTest(cfgTest decodeurtest.DecodeurTest) bool {
+func (e BenchConsumer) Run(cfgTest decodeurtest.DecodeurTest) bool {
     fmt.Println("=====> BenchConsumer test <======")
     output, err := exec.Command("/bin/ls").Output()
     if err!=nil {

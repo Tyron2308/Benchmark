@@ -13,7 +13,7 @@ type BenchProducer struct {
     Admin *topic.KafkaClient
 }
 
-func (this BenchProducer) RunConcreteTest(cfgTest dcode.DecodeurTest) bool {
+func (this BenchProducer) Run(cfgTest dcode.DecodeurTest) bool {
     fmt.Println("======> BenchProducer test <=======")
     num_record, err_n := strconv.Atoi(cfgTest.NumRecord)
     throughput, err_t := strconv.Atoi(cfgTest.Throughput)
@@ -21,11 +21,12 @@ func (this BenchProducer) RunConcreteTest(cfgTest dcode.DecodeurTest) bool {
 	if (err_n != nil || err_t != nil || err_r != nil) {
         return false
     }
+    fmt.Println("this addmin", this.Admin)
     this.Admin.CreateTopics(cfgTest)
     command := "docker exec -it %s kafka-producer-perf-test --topic %s --num-records %d --throughput %d --producer.config=%s --record-size %d --payload-file %s  --producer-props acks=1 bootstrap.servers=kafka_1:9092 buffer.memory=67108864 batch.size=8196 "
 
-    result := fmt.Sprintf(command, "kafka_1" , cfgTest.Topic[0].Name, num_record,
-                          throughput, cfgTest.ConfigPath, recordsize, cfgTest.Payload)
+    result := fmt.Sprintf(command, "kafka_1" , cfgTest.Topic[0].Name, num_record, throughput, cfgTest.ConfigPath, recordsize, cfgTest.Payload)
+
     output, err := exec.Command(result).Output()
     if err!=nil {
         fmt.Println(err.Error())

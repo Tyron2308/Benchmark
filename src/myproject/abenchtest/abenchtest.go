@@ -5,7 +5,7 @@ import (
 )
 
 type ABenchTest interface {
-    RunConcreteTest(cfgTest decodeurtest.DecodeurTest) bool
+    Run(cfgTest decodeurtest.DecodeurTest) bool
 }
 
 

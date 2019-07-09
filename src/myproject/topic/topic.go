@@ -27,10 +27,15 @@ type KafkaClient struct {
 }
 
 func (k *KafkaClient) CreateClientKafka(brokerAddrs []string) *KafkaClient {
+
+    //k.waitOnCluster(brokerAddrs[0])
+    fmt.Println("Pinged brokers ===> ")
     config := s.NewConfig()
     config.Version = s.V2_1_0_0
     k.brokers = brokerAddrs
+    fmt.Println("k.brokers", k.brokers)
     tmp, err := s.NewClusterAdmin(k.brokers, config)
+    fmt.Println("tmp cluster admmin MUST BE NOT NIL ===> ", tmp, err)
     if err == nil {
         k.Admin = tmp
         return k
@@ -42,21 +47,18 @@ func (this KafkaClient) CreateTopics(cfgTest dcode.DecodeurTest) {
     topics, _ := this.ListTopicCluster()
     topiclist := make(map[string]Request, len(cfgTest.Topic))
     for k := range cfgTest.Topic {
-            fmt.Println("idx value ===>", k)
             keyName := cfgTest.Topic[k].Name
-            fmt.Println("value ===>", cfgTest.Topic[k])
             p, _ := strconv.Atoi(cfgTest.Topic[k].Partitions)
-            r, err := strconv.Atoi(cfgTest.Topic[k].Replications)
-            fmt.Println("rrr", r)
-            fmt.Println("rrr err", err)
+            r, _ := strconv.Atoi(cfgTest.Topic[k].Replications)
             if _, ok := topics[keyName]; ok {
+               fmt.Println("topic already created ===> ", keyName)
                topiclist[keyName] = Request{
                     flag: true,
                     Partitions:  int32(p),
                     Replications: int16(r),
                 }
            } else {
-                fmt.Println("replication", r)
+                fmt.Println("topic to create ===> ", keyName)
                 topiclist[keyName] = Request{
                     flag: false,
                     Partitions:  int32(p),
@@ -66,11 +68,7 @@ func (this KafkaClient) CreateTopics(cfgTest dcode.DecodeurTest) {
     }
     for key, structValue := range topiclist {
         if structValue.flag == false {
-            fmt.Println("name topic", key)
-            fmt.Println("name partition", structValue.Partitions)
-            fmt.Println("name partition", structValue.Replications)
-            this.createTopic(Topic{ key, structValue.Partitions, structValue.Replications, },
-            )
+           this.createTopic(Topic{ key, structValue.Partitions, structValue.Replications, },)
         }
     }
 }
