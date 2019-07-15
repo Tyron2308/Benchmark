@@ -5,20 +5,31 @@ configuration:
       - name: "test-345"
         partitions: "1"
         replications: "1" 
-    numrecord: "5"
-    throughput: "2100"
+    numrecord: "5000"
+    throughput: "210"
     configpath: "/etc/kafka/producer.properties"
     recordsize: "30"
     payload: "/etc/kafka/gcc_log.txt"
+    outputfile: "Benchproducer.log"
 
-  - type: "BenchConsumer"
+  #- type: "BenchConsumer"
+    #message: "500"
+    #zookeeper: "localhost:9092"
+    #topic:
+      #- name: "test-345"
+    #threads: "2"
+    #outputfile: "Benchconsumer.log"
+
+  - type: "BenchProducer"
     topic: 
-      - name: "test-xxx"
+      - name: "test-345"
         partitions: "1"
-        replication: "1" 
-    numrecord: "220000"
-    throughput: "800"
-    configpath: ".../zl"
+        replications: "1" 
+    numrecord: "5000"
+    throughput: "210"
+    configpath: "/etc/kafka/producer.properties"
     recordsize: "30"
-    payload: ".../"
- 
+    payload: "/etc/kafka/gcc_log.txt"
+    outputfile: "Benchproducer.log"
+
+

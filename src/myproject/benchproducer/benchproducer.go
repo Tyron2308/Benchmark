@@ -4,8 +4,9 @@ import (
     "fmt"
     dcode "myproject/decodeurtest"
     "os/exec"
-    "strconv"
     topic "myproject/topic"
+    "strconv"
+    "sync"
 )
 
 type BenchProducer struct {
@@ -13,25 +14,28 @@ type BenchProducer struct {
     Admin *topic.KafkaClient
 }
 
-func (this BenchProducer) Run(cfgTest dcode.DecodeurTest) bool {
+func (this BenchProducer) Run(cfgTest dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
     fmt.Println("======> BenchProducer test <=======")
     num_record, err_n := strconv.Atoi(cfgTest.NumRecord)
     throughput, err_t := strconv.Atoi(cfgTest.Throughput)
-    recordsize, err_r := strconv.Atoi(cfgTest.RecordSize)
-	if (err_n != nil || err_t != nil || err_r != nil) {
+    if (err_n != nil || err_t != nil ) {
         return false
     }
-    fmt.Println("this addmin", this.Admin)
     this.Admin.CreateTopics(cfgTest)
-    command := "docker exec -it %s kafka-producer-perf-test --topic %s --num-records %d --throughput %d --producer.config=%s --record-size %d --payload-file %s  --producer-props acks=1 bootstrap.servers=kafka_1:9092 buffer.memory=67108864 batch.size=8196 "
+    command := " --topic %s --num-record %d --throughput %d --producer.config=%s --payload-file=%s"
 
-    result := fmt.Sprintf(command, "kafka_1" , cfgTest.Topic[0].Name, num_record, throughput, cfgTest.ConfigPath, recordsize, cfgTest.Payload)
+//--producer-props acks=1 bootstrap.servers=kafka_1:9092 buffer.memory=67108864 batch.size=8196
 
-    output, err := exec.Command(result).Output()
-    if err!=nil {
-        fmt.Println(err.Error())
-    }
-    fmt.Println(string(output))
+    result := fmt.Sprintf(command, cfgTest.Topic[0].Name, num_record,
+                          throughput, cfgTest.ConfigPath, cfgTest.Payload)
+
+    result = fmt.Sprintf("ARGS=%s",result)
+    fmt.Println("execute kakfa=perf")
+    output, _ := exec.Command("/usr/bin/make", "-C", ".", "run-kafka-producer-perf", result).Output()
+    channel <- string(output)
+    //fmt.Println(string(output), err)
+
+    wg.Done()
     return true
 }
 

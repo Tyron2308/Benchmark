@@ -18,6 +18,10 @@ type DecodeurTest struct {
     ConfigPath string `yaml:configpath`
     RecordSize string `yaml:recordsize`
     Payload string `yaml:payload`
+    Message string `yaml:message`
+    Zookeeper string `yaml:zookeeper`
+    Threads string `yaml:threads`
+    Outputfile string `yaml:outputFile`
 }
 
 type configs struct {

@@ -29,7 +29,6 @@ type KafkaClient struct {
 func (k *KafkaClient) CreateClientKafka(brokerAddrs []string) *KafkaClient {
 
     //k.waitOnCluster(brokerAddrs[0])
-    fmt.Println("Pinged brokers ===> ")
     config := s.NewConfig()
     config.Version = s.V2_1_0_0
     k.brokers = brokerAddrs

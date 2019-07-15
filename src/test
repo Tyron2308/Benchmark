@@ -1,0 +1,28 @@
+package main
+
+import (
+    "fmt"
+    "os"
+    "log"
+    "time"
+)
+
+func main() {
+    b := make([]byte, 1000000)
+
+    time.Sleep(15 * time.Second)
+    file, err := os.Open("file.txt")
+    if err != nil {
+        log.Fatal(err)
+    }
+    n, err := file.Read(b)
+    if err != nil {
+        return
+    }
+
+    file2, _ := os.Open("zob.txt")
+    file2.Write(b)
+    fmt.Println("file:::", string(b[:n]))
+    defer file.Close()
+
+}

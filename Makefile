@@ -44,6 +44,10 @@ build-archi:
 		$(MAKE) -C pipelineBench/ kafka 
 		$(MAKE) -C pipelineBench/ visualization 
 
+build-kafka:
+		@echo "build container kfka "
+		$(MAKE) -C pipelineBench/ kafka 
+		
 stop-kafka: 
 		$(MAKE) -C pipelineBench/ ARGS=docker-kafka/compose/kafka-single-node.yml down
 
@@ -54,3 +58,10 @@ stop-postgres:
 
 destroy-archi: stop-kafka stop-visu stop-postgres
 		@echo "stop container archi "	
+
+
+run-kafka-consumer-perf:
+	docker exec kafka_1 kafka-consumer-perf-test ${ARGS}
+
+run-kafka-producer-perf:
+	docker exec kafka_1 kafka-producer-perf-test ${ARGS}
