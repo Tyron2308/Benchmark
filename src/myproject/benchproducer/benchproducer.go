@@ -1,20 +1,20 @@
 package benchproducer
 
 import (
-    "fmt"
     dcode "myproject/decodeurtest"
-    "os/exec"
     topic "myproject/topic"
+    bench "myproject/abenchtest"
     "strconv"
+    "fmt"
     "sync"
+    "os/exec"
 )
 
 type BenchProducer struct {
-    channel chan interface{}
     Admin *topic.KafkaClient
 }
 
-func (this BenchProducer) Run(cfgTest dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+func (this BenchProducer) Run(cfgTest dcode.DecodeurTest, wg *sync.WaitGroup) bool {
     fmt.Println("======> BenchProducer test <=======")
     num_record, err_n := strconv.Atoi(cfgTest.NumRecord)
     throughput, err_t := strconv.Atoi(cfgTest.Throughput)
@@ -25,17 +25,12 @@ func (this BenchProducer) Run(cfgTest dcode.DecodeurTest, channel chan string, w
     command := " --topic %s --num-record %d --throughput %d --producer.config=%s --payload-file=%s"
 
 //--producer-props acks=1 bootstrap.servers=kafka_1:9092 buffer.memory=67108864 batch.size=8196
-
     result := fmt.Sprintf(command, cfgTest.Topic[0].Name, num_record,
                           throughput, cfgTest.ConfigPath, cfgTest.Payload)
-
     result = fmt.Sprintf("ARGS=%s",result)
-    fmt.Println("execute kakfa=perf")
-    output, _ := exec.Command("/usr/bin/make", "-C", ".", "run-kafka-producer-perf", result).Output()
-    channel <- string(output)
-    //fmt.Println(string(output), err)
-
-    wg.Done()
+    output, err := exec.Command("/usr/bin/make", "-C", ".", "run-kafka-producer-perf", result).Output()
+    bench.DeferWrtiing(err, output, "Benchproducer")
+    defer wg.Done()
     return true
 }
 

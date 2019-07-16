@@ -2,17 +2,17 @@ package benchconsumer
 
 import (
     "fmt"
-    "myproject/decodeurtest"
+    dcode "myproject/decodeurtest"
+    bench "myproject/abenchtest"
     "os/exec"
     "strconv"
     "sync"
 )
 
 type BenchConsumer struct {
-    channel chan interface{}
 }
 
-func (e BenchConsumer) Run(cfgTest decodeurtest.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+func (e BenchConsumer) Run(cfgTest dcode.DecodeurTest, wg *sync.WaitGroup) bool {
     fmt.Println("------> BenchConsumer <-------")
     fmt.Println("struct ===> ", cfgTest)
     nb_mss, err_n := strconv.Atoi(cfgTest.Message)
@@ -27,9 +27,10 @@ func (e BenchConsumer) Run(cfgTest decodeurtest.DecodeurTest, channel chan strin
     result = fmt.Sprintf("ARGS=%s",result)
 
     fmt.Println("execute kakfa-perf-consumer")
-    output, _ := exec.Command("/usr/bin/make", "-C", ".", "run-kafka-consumer-perf", result).Output()
-    channel <- string(output)
+    output, err := exec.Command("/usr/bin/make", "-C", ".", "run-kafka-consumer-perf", result).Output()
 
-    wg.Done()
+    bench.DeferWrtiing(err, output, "BenchConsumer.log")
+    defer wg.Done()
     return true
+
 }

@@ -4,7 +4,6 @@ import (
     dcode "myproject/decodeurtest"
     s     "github.com/Shopify/sarama"
           "log"
-          "fmt"
           "strconv"
 )
 
@@ -32,9 +31,7 @@ func (k *KafkaClient) CreateClientKafka(brokerAddrs []string) *KafkaClient {
     config := s.NewConfig()
     config.Version = s.V2_1_0_0
     k.brokers = brokerAddrs
-    fmt.Println("k.brokers", k.brokers)
     tmp, err := s.NewClusterAdmin(k.brokers, config)
-    fmt.Println("tmp cluster admmin MUST BE NOT NIL ===> ", tmp, err)
     if err == nil {
         k.Admin = tmp
         return k
@@ -50,14 +47,12 @@ func (this KafkaClient) CreateTopics(cfgTest dcode.DecodeurTest) {
             p, _ := strconv.Atoi(cfgTest.Topic[k].Partitions)
             r, _ := strconv.Atoi(cfgTest.Topic[k].Replications)
             if _, ok := topics[keyName]; ok {
-               fmt.Println("topic already created ===> ", keyName)
                topiclist[keyName] = Request{
                     flag: true,
                     Partitions:  int32(p),
                     Replications: int16(r),
                 }
            } else {
-                fmt.Println("topic to create ===> ", keyName)
                 topiclist[keyName] = Request{
                     flag: false,
                     Partitions:  int32(p),

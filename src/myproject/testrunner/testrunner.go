@@ -24,7 +24,7 @@ type mapConfigTest struct {
     m map[string]interface{}
 }
 
-func (this *mapConfigTest) init(channel chan string, wg *sync.WaitGroup) *mapConfigTest {
+func (this *mapConfigTest) init(wg *sync.WaitGroup) *mapConfigTest {
     this = new (mapConfigTest)
     this.m = make(map[string]interface{})
     this.AddNewTest("BenchConsumer", createRoutine("BenchConsumer"))
@@ -32,44 +32,43 @@ func (this *mapConfigTest) init(channel chan string, wg *sync.WaitGroup) *mapCon
     return this
 }
 
-func InitMapConfigTest(channel chan string, wg *sync.WaitGroup) *mapConfigTest {
+func InitMapConfigTest(wg *sync.WaitGroup) *mapConfigTest {
     tmp := mapConfigTest{}
-    return tmp.init(channel, wg)
+    return tmp.init(wg)
 }
 
-func (this *mapConfigTest) AddNewTest(key string, value func(dcode.DecodeurTest, chan string, *sync.WaitGroup) bool) {
+func (this *mapConfigTest) AddNewTest(key string, value func(dcode.DecodeurTest, *sync.WaitGroup)bool) {
     if _, ok := this.m[key]; !ok {
         this.m[key] = value
     }
 }
 
-func (this mapConfigTest) MapBenchtestFunctor(cfg dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) {
+func (this mapConfigTest) MapBenchtestFunctor(cfg dcode.DecodeurTest, wg *sync.WaitGroup) {
     switch cfg.Type {
         case "BenchConsumer":
-            go this.m["BenchConsumer"].(func(dcode.DecodeurTest, chan string, *sync.WaitGroup) bool)(cfg, channel, wg)
+            go this.m["BenchConsumer"].(func(dcode.DecodeurTest,*sync.WaitGroup) bool)(cfg, wg)
         case "BenchProducer":
-            go this.m["BenchProducer"].(func(dcode.DecodeurTest, chan string, *sync.WaitGroup) bool)(cfg, channel, wg)
-            fmt.Println("PRODUCER DONE")
+            go this.m["BenchProducer"].(func(dcode.DecodeurTest,*sync.WaitGroup) bool)(cfg, wg)
     }
 }
 
-func createRoutine(str string) func(cfg dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+func createRoutine(str string) func(cfg dcode.DecodeurTest,wg *sync.WaitGroup) bool {
 
     kAdmin := topic.KafkaClient{}
     switch str {
         case "BenchConsumer":
-            return func(cfg dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+            return func(cfg dcode.DecodeurTest, wg *sync.WaitGroup) bool {
                 tmp := new (benchC.BenchConsumer)
-                return tmp.Run(cfg, channel, wg)
+                return tmp.Run(cfg, wg)
             }
         case "BenchProducer":
-            return func(cfg dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+            return func(cfg dcode.DecodeurTest, wg *sync.WaitGroup) bool {
                    tmp := new (benchP.BenchProducer)
-                   tmp.Admin = kAdmin.CreateClientKafka([]string {host})
-                   return tmp.Run(cfg, channel, wg)
+                   tmp.Admin = kAdmin.CreateClientKafka([]string{host})
+                   return tmp.Run(cfg, wg)
             }
         default:
-            return func(cfg dcode.DecodeurTest, channel chan string, wg *sync.WaitGroup) bool {
+            return func(cfg dcode.DecodeurTest, wg *sync.WaitGroup) bool {
                 return false
             }
     }

@@ -18,30 +18,19 @@ func main() {
         return
     }
     var wg sync.WaitGroup
-    i := 0
     cfg := dcode.GenerateBenchmark(yaml)
-
-    bufferedOutput  := make([]string, len(cfg.Cfgs))
     var paths []string
-    channel := make(chan string, len(cfg.Cfgs))
-
-    defer close(channel)
 
     fmt.Println("====> initiated cluster <====")
-    benchtest := testR.InitMapConfigTest(channel, &wg)
+    benchtest := testR.InitMapConfigTest(&wg)
+    fmt.Println("size cfgs", len(cfg.Cfgs))
     wg.Add(len(cfg.Cfgs))
     for _, configBench := range cfg.Cfgs {
-         benchtest.MapBenchtestFunctor(configBench, channel, &wg)
+         benchtest.MapBenchtestFunctor(configBench, &wg)
          paths = append(paths, configBench.Outputfile)
 
     }
-    c := <-channel
-    fmt.Println("value buffer ===> ", string(c))
-    bufferedOutput[i] = c
-    i++
     wg.Wait()
-    fmt.Println("====> destroying cluster test <====", c)
-//    testR.FlushOutputRoutine(bufferedOutput, paths)
     fmt.Println("sleep berfore killing programs")
     time.Sleep(15 * time.Second)
 }
